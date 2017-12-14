@@ -18,6 +18,8 @@ case "$1" in
     iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -j MASQUERADE
     ifup uap0
     service dnsmasq restart
+    ifdown wlan0
+    ifup wlan0
     ;;
   stop)
     ifdown uap0
