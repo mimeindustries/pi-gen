@@ -8,7 +8,6 @@ source-directory /etc/network/interfaces.d
 
 auto lo
 auto eth0
-auto wlan0
 auto uap0
 
 iface eth0 inet dhcp
