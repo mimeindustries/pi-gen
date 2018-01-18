@@ -7,17 +7,29 @@
 source-directory /etc/network/interfaces.d
 
 auto lo
-auto eth0
-auto uap0
+allow-hotplug eth0
+allow-hotplug uap0
+allow-hotplug wlan0
 
 iface eth0 inet dhcp
 iface lo inet loopback
 
 allow-hotplug wlan0
 iface wlan0 inet dhcp
+  pre-up ifup uap0
+  pre-up iw wlan0 set power_save off
   wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+  pre-down ifdown uap0 --force
 
+allow-hotplug uap0
 iface uap0 inet static
+  pre-up if  ! iw dev | grep uap0; then iw phy phy0 interface add uap0 type __ap; fi;
+  pre-up ip link set uap0 address `sed '2q;d' /sys/class/ieee80211/phy0/addresses`
+  pre-up iw uap0 set power_save off
+  pre-up sysctl net.ipv4.ip_forward=1
+  pre-up iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -j MASQUERADE
+  post-up systemctl enable dnsmasq && systemctl start dnsmasq
+  post-down systemctl stop dnsmasq && systemctl disable dnsmasq
   hostapd /etc/hostapd/hostapd.conf
   address 10.10.10.10
   netmask 255.255.255.0

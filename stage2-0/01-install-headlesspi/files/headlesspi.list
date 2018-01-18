@@ -1,2 +1,1 @@
-deb https://packagecloud.io/mimeindustries/headlesspi/raspbian/ stretch main
-deb-src https://packagecloud.io/mimeindustries/headlesspi/raspbian/ stretch main
+deb https://mimeindustries.github.io/apt-repository/ stretch main
